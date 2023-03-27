@@ -6,24 +6,33 @@ internal class Program
 
     private static void Main(string[] args)
     {
+        List<Pessoa> listaPessoa = new List<Pessoa>();
+        List<ToDo> listaTarefas = new List<ToDo>();
+
+        Pessoa pessoa = new Pessoa("Ari");
+        listaPessoa.Add(pessoa);
+
+        Categoria categoria = new Categoria();
+        categoria.AdicionarCategoria("Pessoal");
+        categoria.AdicionarCategoria("Profissional");
+        categoria.AdicionarCategoria("Acadêmico");
 
         if (!File.Exists("ToDoTasks.txt"))
         {
             StreamWriter sw = new("ToDoTasks.txt");
             sw.Close();
         }
-        Categoria categoria = new Categoria();
-        categoria.AdicionarCategoria("Pessoal");
-        categoria.AdicionarCategoria("Profissional");
-        categoria.AdicionarCategoria("Acadêmico");
+        else
+        {
+            listaTarefas = ReadFileListToDo("ToDoTasks.txt");
 
+            Console.Write("Impressão teste");
+            foreach(ToDo item in listaTarefas)
+            {
+                Console.WriteLine(item.ToString());
+            }
+        }
         
-
-        List<Pessoa> listaPessoa = new List<Pessoa>();
-        List<ToDo> listaTarefas = new List<ToDo>();
-
-        Pessoa pessoa = new Pessoa("Ari");
-        listaPessoa.Add(pessoa);
 
         string opcao = "";
         int opcao_interna = 0;
@@ -51,7 +60,7 @@ internal class Program
                             do
                             {
                                 string option;
-                                Console.WriteLine("Deseja inserir uma data final:\n[1] - Sim\n [2] - Não");
+                                Console.WriteLine("Deseja inserir uma data final:\n[1] - Sim\n[2] - Não");
                                 option = Console.ReadLine();
                                 switch (option)
                                 {
@@ -200,6 +209,7 @@ internal class Program
                 case "7":
                     while ((tarefa = ProcurarTarefa(listaTarefas)) == null) { }
                     tarefa.SetStatus();
+                    UpdateFile("ToDoTasks.txt", listaTarefas);
                 break;
 
                 case "8":
@@ -289,14 +299,14 @@ internal class Program
         Console.WriteLine("Digite o ID da tarefa: ");
         string id = Console.ReadLine(); 
 
-        id = id.ToUpper().Trim();
+        id = id.ToLower().Trim();
 
         int contador = 0;
         bool flag = true;
 
         while((contador < listaTarefas.Count) && (flag))
         {
-            if (listaTarefas[contador].GetID().ToUpper().Equals(id)) 
+            if (listaTarefas[contador].GetID().Equals(id)) 
             {
                 flag = false;
                 tarefa = listaTarefas[contador];
@@ -372,4 +382,84 @@ internal class Program
             throw;
         }
     }
+    private static List<ToDo> ReadFileListToDo(string file)
+    {
+        string item;
+
+        string id_tarefa;
+        string descricao_tarefa;
+        string id_proprietario_tarefa;
+        string nome_proprietario_tarefa;
+
+        int dia_criacao;
+        int mes_criacao;
+        int ano_criacao;
+        int hora_criacao;
+        int minutos_criacao;
+
+        int dia_vencimento;
+        int mes_vencimento;
+        int ano_vencimento;
+        int hora_vencimento;
+        int minutos_vencimento;
+
+        bool status;
+        string categoria;
+        ToDo tarefa;
+        Pessoa pessoa;
+        DateTime data_criacao;
+        DateTime data_vencimento;
+
+        List<ToDo> retorno = new List<ToDo>();
+
+        try
+        {
+            StreamReader sr = new StreamReader(file);
+            while(!sr.EndOfStream)
+            {
+                item = sr.ReadLine();
+                string[] linha = item.Split(";");
+
+                id_tarefa = linha[0];
+                descricao_tarefa = linha[1];
+
+                id_proprietario_tarefa = linha[2];
+                nome_proprietario_tarefa = linha[3];
+                pessoa = new(id_proprietario_tarefa, nome_proprietario_tarefa);
+
+                dia_criacao = int.Parse(linha[4]);
+                mes_criacao = int.Parse(linha[5]);
+                ano_criacao = int.Parse(linha[6]);
+                hora_criacao = int.Parse(linha[7]);
+                minutos_criacao = int.Parse(linha[8]);
+
+                data_criacao = new(ano_criacao, mes_criacao, dia_criacao, hora_criacao, minutos_criacao, 0);
+
+                dia_vencimento = int.Parse(linha[9]);
+                mes_vencimento = int.Parse(linha[10]);
+                ano_vencimento = int.Parse(linha[11]);
+                hora_vencimento = int.Parse(linha[12]);
+                minutos_vencimento = int.Parse(linha[13]);
+
+                data_vencimento = new(ano_vencimento, mes_vencimento, dia_vencimento, hora_vencimento, minutos_vencimento, 0);
+
+                status = bool.Parse(linha[14]);
+                categoria = linha[15];
+
+                tarefa = new ToDo(id_tarefa,descricao_tarefa,pessoa,data_criacao,data_vencimento,status,categoria);
+
+                retorno.Add(tarefa);
+                sr.Close();
+
+            }
+
+        }
+        catch(Exception n)
+        {
+
+        }
+
+        return retorno;
+    }
+    
 }

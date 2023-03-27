@@ -18,6 +18,12 @@ namespace ToDoList
             this._id = temp.ToString().Substring(0, 3);
             this._nome = nome;
         }
+        public Pessoa(string id, string nome) 
+        {
+            _id = id;
+            _nome = nome;
+        }
+
         public string GetID()
         {
             return _id; 

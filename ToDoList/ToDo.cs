@@ -39,13 +39,15 @@ namespace ToDoList
             this._status = false;
         }
         //$"{this._id};{this._descricao};{this._proprietario};{this._data_criacao};{this._data_vencimento};{this._status}";
-        public ToDo(string id, string descricao,Pessoa pessoa,  DateTime vencimento)
+        public ToDo(string id, string descricao,Pessoa pessoa, DateTime criacao, DateTime vencimento,bool status, string categoria_escolhida )
         {
             this._id = id;
             this._descricao = descricao;
-            this._data_criacao = DateTime.Now;
+            this._proprietario = pessoa;
+            this._data_criacao = criacao;
             this._data_vencimento = vencimento;
-            this._status = false;
+            this._status = status;
+            this._categoria_escolhida = categoria_escolhida;
         }
         public string GetID()
         {
