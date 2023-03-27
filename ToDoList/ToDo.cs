@@ -24,9 +24,29 @@ namespace ToDoList
             this._id = temp.ToString().Substring(0, 3);
             this._descricao = descricao;
             this._data_criacao = DateTime.Now;
+            this._data_vencimento = new DateTime(9999, 12, 31, 23, 59, 0);
+            //this._data_vencimento = null;
+            this._status = false;
+            this._categoria_escolhida = "";
+        }
+        public ToDo(string descricao, DateTime vencimento)
+        {
+            var temp = Guid.NewGuid();
+            this._id = temp.ToString().Substring(0, 3);
+            this._descricao = descricao;
+            this._data_criacao = DateTime.Now;
+            this._data_vencimento = vencimento;
             this._status = false;
         }
-
+        //$"{this._id};{this._descricao};{this._proprietario};{this._data_criacao};{this._data_vencimento};{this._status}";
+        public ToDo(string id, string descricao,Pessoa pessoa,  DateTime vencimento)
+        {
+            this._id = id;
+            this._descricao = descricao;
+            this._data_criacao = DateTime.Now;
+            this._data_vencimento = vencimento;
+            this._status = false;
+        }
         public string GetID()
         {
             return this._id; 
@@ -79,7 +99,7 @@ namespace ToDoList
         {
             return _data_criacao;
         }
-        public DateTime GetData_vencimento() 
+        public DateTime? GetData_vencimento() 
         {
             return this._data_vencimento;
         }
@@ -107,9 +127,28 @@ namespace ToDoList
                    "Status: " + GetStatus();
         }
 
+        public string DateTimeToFile(DateTime d)
+        {
+            string[] data = d.ToShortDateString().Split("/");
+            string[] hora = d.ToShortTimeString().Split(":");
+            
+            return $"{data[0]};{data[1]};{data[2]};{hora[0]};{hora[1]}";
+        }
+
         public string ToFile()
         {
-            return  $"{GetID()};{GetDescricao()};{GetCategoriaEscolhida()};{GetPessoa()};{GetData_criacao()};{GetData_vencimento()};{GetStatus()}";
+            string retorno =  $"{this._id};{this._descricao};{this._proprietario.PersonToFile()};{DateTimeToFile(this._data_criacao)};" +
+                $"{DateTimeToFile(this._data_vencimento)};{this._status}";
+            if (this._categoria_escolhida.Equals(""))
+            {
+                retorno += ";0";
+            }
+            else
+            {
+                retorno += $"; {this._categoria_escolhida}";
+            }
+
+            return retorno;
         }
 
     }
