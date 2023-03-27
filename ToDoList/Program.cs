@@ -3,8 +3,15 @@ using ToDoList;
 
 internal class Program
 {
+
     private static void Main(string[] args)
     {
+
+        if (!File.Exists("ToDoTasks.txt"))
+        {
+            StreamWriter sw = new("ToDoTasks.txt");
+            sw.Close();
+        }
         Categoria categoria = new Categoria();
         categoria.AdicionarCategoria("Pessoal");
         categoria.AdicionarCategoria("Profissional");
@@ -18,18 +25,18 @@ internal class Program
         Pessoa pessoa = new Pessoa("Ari");
         listaPessoa.Add(pessoa);
 
-        int opcao = 0;
+        string opcao = "";
         int opcao_interna = 0;
         ToDo tarefa = null;
         string? descricao = null;
         bool flag;
 
-        while((opcao = Menu()) != 11)
+        while((opcao = Menu()) != "11")
         {
        
             switch (opcao)
             {
-                case 1:
+                case "1":
                     do
                     {
                         flag = false;
@@ -40,8 +47,31 @@ internal class Program
                             flag = true;
                             tarefa = CriacaoTarefa(descricao);
                             tarefa.SetCategoria(categoria);
-                            tarefa.SetPessoa(listaPessoa[0]);   
+                            bool date_option = true;
+                            do
+                            {
+                                string option;
+                                Console.WriteLine("Deseja inserir uma data final:\n[1] - Sim\n [2] - Não");
+                                option = Console.ReadLine();
+                                switch (option)
+                                {
+                                    case "1":
+                                        tarefa.SetDataVencimento(GetTempoFinal());
+                                        date_option = false;
+                                        break;
+                                    case "2":
+                                        date_option = false;
+                                        break;
+                                    default:
+                                        Console.WriteLine("Valor inválido");
+                                        break;
+                                }
+                            } while (date_option);
+
+                            //inserir pessoa ou não para o padrão
+                            tarefa.SetPessoa(listaPessoa[0]);
                             listaTarefas.Add(tarefa);
+                            UpdateFile("ToDoTasks.txt", listaTarefas);
                         }
                         else
                         {
@@ -53,7 +83,7 @@ internal class Program
 
                 break;
 
-                case 2:
+                case "2":
                     flag = false;
                     tarefa = null;
 
@@ -78,7 +108,7 @@ internal class Program
 
                 break;
 
-                case 3:
+                case "3":
 
                     do
                     {
@@ -105,7 +135,7 @@ internal class Program
 
                 break;
 
-                case 4:
+                case "4":
 
                     do
                     {
@@ -158,29 +188,29 @@ internal class Program
                     }
                 break;
 
-                case 5:
+                case "5":
                     while ((tarefa = ProcurarTarefa(listaTarefas)) == null) { }
                     Console.WriteLine(tarefa.GetData_criacao());
                 break;
 
-                case 6:
+                case "6":
                     Console.WriteLine("Método ainda não implementada");
                 break;
 
-                case 7:
+                case "7":
                     while ((tarefa = ProcurarTarefa(listaTarefas)) == null) { }
                     tarefa.SetStatus();
                 break;
 
-                case 8:
+                case "8":
                     ListarPessoas(listaPessoa);
                 break;
 
-                case 9:
+                case "9":
                     categoria.ListarCategoria();
                 break;
 
-                case 10:
+                case "10":
                     ListarTarefas(listaTarefas);
                 break;
 
@@ -197,9 +227,38 @@ internal class Program
 
     }
 
-    private static int Menu()
+    private static DateTime GetTempoFinal()
     {
-        int opcao = 0;
+        int day = VerifyDate('o', "dia");
+        int month = VerifyDate('o', "mês");
+        int year = VerifyDate('o', "ano");
+        int hour = VerifyDate('a', "hora");
+        int minute = VerifyDate('o', "minuto");
+
+        DateTime time = new(year,month,day,hour,minute, 0);
+
+        return time;
+    }
+
+    private static int VerifyDate(char article, string variable)
+    { 
+        int correct;
+        bool aux = true;
+
+        do
+        {
+            Console.Write($"Informe {article} {variable} desejad{article}: ");
+            aux = int.TryParse(Console.ReadLine(), out correct);
+            if (!aux)
+                Console.WriteLine($"{variable} inválid{article} deve ser um número inteiro positivo");
+        } while (!aux && correct >= 0);
+
+        return correct;
+    }
+
+    private static string Menu()
+    {
+        string opcao = "";
 
         Console.WriteLine("OPERAÇÕES SOBREA TAREFA: ");
         Console.WriteLine("1 - CRIAR TAREFA");
@@ -213,7 +272,7 @@ internal class Program
         Console.WriteLine("9 - LISTAR CATEGORIAS");
         Console.WriteLine("10 - LISTAS TAREFAS");
         Console.WriteLine("11 - SAIR");
-        opcao = int.Parse(Console.ReadLine());
+        opcao = Console.ReadLine();
 
         return opcao;
     }
@@ -294,6 +353,23 @@ internal class Program
             {
                 Console.WriteLine(item_tarefa.ToString());
             }
+        }
+    }
+
+    private static void UpdateFile(string file, List<ToDo> list)
+    {
+        try
+        {
+            StreamWriter sw = new(file);
+            foreach (var item in list)
+            {
+                sw.WriteLine(item.ToFile());
+            }
+            sw.Close();
+        }
+        catch (Exception)
+        {
+            throw;
         }
     }
 }

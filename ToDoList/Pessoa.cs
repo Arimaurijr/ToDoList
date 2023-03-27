@@ -34,6 +34,10 @@ namespace ToDoList
         {
             return "ID: " + GetID() + " Nome: " + GetNome(); 
         }
+        public string PersonToFile()
+        {
+            return $"{this._id};{this._nome}";
+        }
 
     }
 }
