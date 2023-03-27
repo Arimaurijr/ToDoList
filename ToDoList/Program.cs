@@ -18,18 +18,18 @@ internal class Program
         Pessoa pessoa = new Pessoa("Ari");
         listaPessoa.Add(pessoa);
 
-        int opcao = 0;
+        string opcao = "";
         int opcao_interna = 0;
         ToDo tarefa = null;
         string? descricao = null;
         bool flag;
 
-        while((opcao = Menu()) != 11)
+        while((opcao = Menu()) != "11")
         {
        
             switch (opcao)
             {
-                case 1:
+                case "1":
                     do
                     {
                         flag = false;
@@ -53,7 +53,7 @@ internal class Program
 
                 break;
 
-                case 2:
+                case "2":
                     flag = false;
                     tarefa = null;
 
@@ -78,7 +78,7 @@ internal class Program
 
                 break;
 
-                case 3:
+                case "3":
 
                     do
                     {
@@ -105,7 +105,7 @@ internal class Program
 
                 break;
 
-                case 4:
+                case "4":
 
                     do
                     {
@@ -158,29 +158,29 @@ internal class Program
                     }
                 break;
 
-                case 5:
+                case "5":
                     while ((tarefa = ProcurarTarefa(listaTarefas)) == null) { }
                     Console.WriteLine(tarefa.GetData_criacao());
                 break;
 
-                case 6:
+                case "6":
                     Console.WriteLine("Método ainda não implementada");
                 break;
 
-                case 7:
+                case "7":
                     while ((tarefa = ProcurarTarefa(listaTarefas)) == null) { }
                     tarefa.SetStatus();
                 break;
 
-                case 8:
+                case "8":
                     ListarPessoas(listaPessoa);
                 break;
 
-                case 9:
+                case "9":
                     categoria.ListarCategoria();
                 break;
 
-                case 10:
+                case "10":
                     ListarTarefas(listaTarefas);
                 break;
 
@@ -197,9 +197,9 @@ internal class Program
 
     }
 
-    private static int Menu()
+    private static string Menu()
     {
-        int opcao = 0;
+        string opcao = "";
 
         Console.WriteLine("OPERAÇÕES SOBREA TAREFA: ");
         Console.WriteLine("1 - CRIAR TAREFA");
@@ -213,7 +213,7 @@ internal class Program
         Console.WriteLine("9 - LISTAR CATEGORIAS");
         Console.WriteLine("10 - LISTAS TAREFAS");
         Console.WriteLine("11 - SAIR");
-        opcao = int.Parse(Console.ReadLine());
+        opcao = Console.ReadLine();
 
         return opcao;
     }

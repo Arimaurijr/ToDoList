@@ -26,6 +26,7 @@ namespace ToDoList
             this._data_criacao = DateTime.Now;
             this._status = false;
         }
+
         public string GetID()
         {
             return this._id; 
@@ -104,6 +105,11 @@ namespace ToDoList
                    "Data criação: " + GetData_criacao() + "\n" +
                    "Data de vencimento: " + GetData_vencimento() + "\n" +
                    "Status: " + GetStatus();
+        }
+
+        public string ToFile()
+        {
+            return  $"{GetID()};{GetDescricao()};{GetCategoriaEscolhida()};{GetPessoa()};{GetData_criacao()};{GetData_vencimento()};{GetStatus()}";
         }
 
     }
