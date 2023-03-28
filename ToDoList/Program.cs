@@ -18,16 +18,10 @@ internal class Program
 
         Categoria categoria = new Categoria();
 
-        
-        */
 
-        
-        if(!File.Exists("ArquivoCategoria.txt"))
-
-        if (!File.Exists("ArquivoTarefas.txt"))
+        if (!File.Exists("ArquivoCategoria.txt"))
         {
             StreamWriter sw = new("ArquivoCategoria.txt");
-            StreamWriter sw = new("ArquivoTarefas.txt");
             sw.Close();
         }
         else
@@ -69,12 +63,6 @@ internal class Program
         else
         {
             listaPessoa = ReadFileListPerson("ArquivoPessoa.txt");
-
-            Console.Write("Impressão teste Pessoa");
-            foreach (Pessoa item in listaPessoa)
-            {
-                Console.WriteLine(item.ToString());
-            }
         }
 
 
@@ -84,10 +72,10 @@ internal class Program
         string? descricao = null;
         bool flag;
 
-        while((opcao = Menu()) != "11")
+        while(opcao != "9")
         {
             Console.Clear();
-       
+            opcao = Menu();
             switch (opcao)
             {
                 case "1":
@@ -290,33 +278,24 @@ internal class Program
 
                 case "5":
                     while ((tarefa = ProcurarTarefa(listaTarefas)) == null) { }
-                    Console.WriteLine(tarefa.GetData_criacao());
-                break;
-
-                case "6":
-                    while ((tarefa = ProcurarTarefa(listaTarefas)) == null) { }
-                    Console.WriteLine(tarefa.GetData_vencimento());
-                    break;
-
-                case "7":
-                    while ((tarefa = ProcurarTarefa(listaTarefas)) == null) { }
                     tarefa.SetStatus();
                     UpdateFileTasks("ArquivoTarefa.txt", listaTarefas);
                 break;
 
-                case "8":
+                case "6":
                     ListarPessoas(listaPessoa);
                 break;
 
-                case "9":
+                case "7":
                     categoria.ListarCategoria();
                 break;
 
-                case "10":
+                case "8":
                     ListarTarefas(listaTarefas);
                 break;
 
-                case "11":
+                case "9":
+                    Console.WriteLine("Fechando o programa...");
                     break;
 
                 default:
@@ -326,10 +305,9 @@ internal class Program
 
             Console.WriteLine();
             UpdateFileListPerson("ArquivoPessoa.txt", listaPessoa);
-
+            Console.WriteLine("Pressione qualquer tecla para continuar...");
+            Console.ReadKey();
         }
-
-
 
     }
 
