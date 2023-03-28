@@ -117,7 +117,7 @@ namespace ToDoList
         {
             this._proprietario = pessoa;
         }
-
+        
         public override string ToString()
         {
             return "ID: " + GetID() + "\n" +

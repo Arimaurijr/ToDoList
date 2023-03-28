@@ -501,7 +501,7 @@ internal class Program
         {
             var verify = "";
             StreamReader sr = new StreamReader(file);
-            while(verify != null)
+            while(!sr.EndOfStream)
             {
                 item = sr.ReadLine();
                 string[] linha = item.Split(";");
