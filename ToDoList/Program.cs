@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Globalization;
 using ToDoList;
 
 internal class Program
@@ -6,6 +7,10 @@ internal class Program
 
     private static void Main(string[] args)
     {
+        string arquivoTarefa = "ArquivoTarefa.txt";
+        string arquivoCategoria = "ArquivoCategoria.txt";
+        string arquivoPessoa = "ArquivoPessoa.txt";
+
         List<Pessoa> listaPessoa = new List<Pessoa>();
         List<ToDo> listaTarefas = new List<ToDo>();
 
@@ -13,24 +18,49 @@ internal class Program
         listaPessoa.Add(pessoa);
 
         Categoria categoria = new Categoria();
+
+        /*
+        categoria = ReadFileListCategory("ArquivoCategoria.txt", categoria);
+
+        foreach(string item in categoria.GetListaCategoria())
+        {
+            Console.WriteLine(item);
+        }
+        */
+
+        /*
         categoria.AdicionarCategoria("Pessoal");
         categoria.AdicionarCategoria("Profissional");
         categoria.AdicionarCategoria("Acadêmico");
-
-        if (!File.Exists("ToDoTasks.txt"))
+        */
+        //UpdateFileCategory(arquivoCategoria, categoria);
+        if(!File.Exists("ArquivoCategoria.txt"))
         {
-            StreamWriter sw = new("ToDoTasks.txt");
+            StreamWriter sw = new("ArquivoCategoria.txt");
             sw.Close();
         }
         else
         {
-            listaTarefas = ReadFileListToDo("ToDoTasks.txt");
+            categoria = ReadFileListCategory("ArquivoCategoria.txt", categoria);
+        }
+        
 
+
+        if (!File.Exists("ArquivoTarefa.txt"))
+        {
+            StreamWriter sw = new("ArquivoTarefa.txt");
+            sw.Close();
+        }
+        else
+        {
+            listaTarefas = ReadFileListToDo("ArquivoTarefa.txt");
+            /*
             Console.Write("Impressão teste");
             foreach(ToDo item in listaTarefas)
             {
                 Console.WriteLine(item.ToString());
             }
+            */
         }
         
 
@@ -80,7 +110,7 @@ internal class Program
                             //inserir pessoa ou não para o padrão
                             tarefa.SetPessoa(listaPessoa[0]);
                             listaTarefas.Add(tarefa);
-                            UpdateFile("ToDoTasks.txt", listaTarefas);
+                            UpdateFileTasks("ArquivoTarefa.txt", listaTarefas);
                         }
                         else
                         {
@@ -106,6 +136,7 @@ internal class Program
                         {
                             flag = true;
                             tarefa.SetDescricao(descricao);
+                            UpdateFileTasks("ArquivoTarefa.txt", listaTarefas);
                             Console.WriteLine("Descrição alterada com sucesso !");
                         }
                         else
@@ -114,6 +145,8 @@ internal class Program
                         }
 
                     }while(flag == false);
+
+
 
                 break;
 
@@ -131,7 +164,10 @@ internal class Program
                     {
                         Console.WriteLine("Digite a nova categoria: ");
                         string categ = Console.ReadLine();
-                        categoria.AdicionarCategoria(categ);    
+                        categoria.AdicionarCategoria(categ);
+                        UpdateFileCategory("ArquivoCategoria.txt", categoria);
+
+
                     }
                     else
                     {
@@ -139,7 +175,8 @@ internal class Program
                         while ((tarefa = ProcurarTarefa(listaTarefas)) == null) { }
                         Console.WriteLine("Digite a categoria: ");
                         string cat = Console.ReadLine();
-                        tarefa.SetCategoriaEscolhida(cat);  
+                        tarefa.SetCategoriaEscolhida(cat, categoria);
+                        UpdateFileTasks("ArquivoTarefa.txt", listaTarefas);
                     }
 
                 break;
@@ -209,7 +246,7 @@ internal class Program
                 case "7":
                     while ((tarefa = ProcurarTarefa(listaTarefas)) == null) { }
                     tarefa.SetStatus();
-                    UpdateFile("ToDoTasks.txt", listaTarefas);
+                    UpdateFileTasks("ArquivoTarefa.txt", listaTarefas);
                 break;
 
                 case "8":
@@ -217,6 +254,8 @@ internal class Program
                 break;
 
                 case "9":
+                    //categoria.GetListaCategoria().RemoveAll;
+                    //categoria = ReadFileListCategory("ArquivoCategoria.txt", categoria);
                     categoria.ListarCategoria();
                 break;
 
@@ -273,11 +312,11 @@ internal class Program
         Console.WriteLine("OPERAÇÕES SOBREA TAREFA: ");
         Console.WriteLine("1 - CRIAR TAREFA");
         Console.WriteLine("2 - ALTERAR DESCRIÇÃO");
-        Console.WriteLine("3 - CATEGORIA");
-        Console.WriteLine("4 - PESSOA");
-        Console.WriteLine("5 - DATA DE CRIAÇÃO");
-        Console.WriteLine("6 - DATA DE VENCIMENTO");
-        Console.WriteLine("7 - MUDAR STATUS");
+        Console.WriteLine("3 - MENU CATEGORIA");
+        Console.WriteLine("4 - MENU PESSOA");
+        Console.WriteLine("5 - VISUALIZAR DATA DE CRIAÇÃO DA TAREFA");
+        Console.WriteLine("6 - VISUALIZAR DATA DE VENCIMENTO DA TAREFA");
+        Console.WriteLine("7 - MUDAR STATUS DA TAREFA");
         Console.WriteLine("8 - LISTAR PESSOAS");
         Console.WriteLine("9 - LISTAR CATEGORIAS");
         Console.WriteLine("10 - LISTAS TAREFAS");
@@ -362,11 +401,12 @@ internal class Program
             foreach(ToDo item_tarefa in listasTarefas)
             {
                 Console.WriteLine(item_tarefa.ToString());
+                Console.WriteLine();
             }
         }
     }
 
-    private static void UpdateFile(string file, List<ToDo> list)
+    private static void UpdateFileTasks(string file, List<ToDo> list)
     {
         try
         {
@@ -449,17 +489,57 @@ internal class Program
                 tarefa = new ToDo(id_tarefa,descricao_tarefa,pessoa,data_criacao,data_vencimento,status,categoria);
 
                 retorno.Add(tarefa);
-                sr.Close();
+               
 
             }
-
+            sr.Close();
         }
         catch(Exception n)
         {
-
+            Console.WriteLine(n.Message);
         }
 
         return retorno;
     }
-    
+    private static void UpdateFileCategory(string file, Categoria categoria)
+    {
+
+        try
+        {
+            StreamWriter sw = new(file);
+
+            foreach(string item in categoria.GetListaCategoria())
+            {
+                sw.WriteLine(item);
+            }
+            sw.Close();
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
+    private static Categoria ReadFileListCategory(string file, Categoria categoria)
+    {
+        string item;
+        if (File.Exists(file))
+        {
+            StreamReader sr = new StreamReader(file);
+            while (!sr.EndOfStream)
+            {
+                item = sr.ReadLine();
+                categoria.AdicionarCategoria(item);
+            }
+            sr.Close();
+        }
+        else
+        {
+            Console.WriteLine("Arquivo não encontrado !");
+        }
+       
+
+        return categoria;
+    }
+
+
 }

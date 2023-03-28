@@ -84,9 +84,9 @@ namespace ToDoList
         {
             return this._categoria_escolhida;
         }
-        public void SetCategoriaEscolhida(string cte)
+        public void SetCategoriaEscolhida(string cte, Categoria categoria)
         {
-            if(_categoria.ProcurarCategoria(cte) == null)
+            if(categoria.ProcurarCategoria(cte) == null)
             {
                 Console.WriteLine("Categoria não encontrada !");
             }

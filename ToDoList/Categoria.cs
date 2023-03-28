@@ -14,6 +14,10 @@ namespace ToDoList
         {
             _lista_categoria = new List<string>();
         }
+        public List<string> GetListaCategoria()
+        {
+            return this._lista_categoria;
+        }
         public void AdicionarCategoria(string categoria)
         {
              categoria = categoria.Trim().ToUpper();
@@ -32,13 +36,13 @@ namespace ToDoList
                 if (_lista_categoria[i].Equals(categoria)) 
                 {
                     achar = true;
-                    categoria_encontrada = categoria;
+                    return (categoria_encontrada = categoria);
                 }
 
                 i++;
             }
            
-            return categoria_encontrada;
+            return null;
 
         }
         public void ListarCategoria()
@@ -55,6 +59,7 @@ namespace ToDoList
                 }
             }
         }
+      
 
     }
 }
