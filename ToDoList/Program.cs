@@ -9,30 +9,61 @@ internal class Program
         List<Pessoa> listaPessoa = new List<Pessoa>();
         List<ToDo> listaTarefas = new List<ToDo>();
 
-        Pessoa pessoa = new Pessoa("Ari");
-        listaPessoa.Add(pessoa);
+        Pessoa pessoa;
 
         Categoria categoria = new Categoria();
         categoria.AdicionarCategoria("Pessoal");
         categoria.AdicionarCategoria("Profissional");
         categoria.AdicionarCategoria("Acadêmico");
 
-        if (!File.Exists("ToDoTasks.txt"))
+        if (!File.Exists("ArquivoTarefas.txt"))
         {
-            StreamWriter sw = new("ToDoTasks.txt");
+            StreamWriter sw = new("ArquivoTarefas.txt");
             sw.Close();
         }
         else
         {
-            listaTarefas = ReadFileListToDo("ToDoTasks.txt");
-
+            listaTarefas = ReadFileListToDo("ArquivoTarefas.txt");
+            /*
             Console.Write("Impressão teste");
             foreach(ToDo item in listaTarefas)
             {
                 Console.WriteLine(item.ToString());
             }
+            */
         }
-        
+
+        if (!File.Exists("ArquivoPessoa.txt"))
+        {
+            StreamWriter sw = new("ArquivoPessoa.txt");
+            sw.Close();
+            bool invalido;
+            string usuario;
+            do
+            {
+                Console.WriteLine("Qual o nome do usuário padrão: ");
+                usuario = Console.ReadLine();
+                invalido = String.IsNullOrEmpty(usuario);
+                if (invalido)
+                {
+                    Console.WriteLine("Nome inválido");
+                }
+            } while (invalido);
+            pessoa = new Pessoa(usuario);
+            listaPessoa.Add(pessoa);
+            UpdateFileListPerson("ArquivoPessoa.txt", listaPessoa);
+        }
+        else
+        {
+            listaPessoa = ReadFileListPerson("ArquivoPessoa.txt");
+
+            Console.Write("Impressão teste Pessoa");
+            foreach (Pessoa item in listaPessoa)
+            {
+                Console.WriteLine(item.ToString());
+            }
+        }
+
 
         string opcao = "";
         int opcao_interna = 0;
@@ -42,6 +73,7 @@ internal class Program
 
         while((opcao = Menu()) != "11")
         {
+            Console.Clear();
        
             switch (opcao)
             {
@@ -77,10 +109,51 @@ internal class Program
                                 }
                             } while (date_option);
 
-                            //inserir pessoa ou não para o padrão
-                            tarefa.SetPessoa(listaPessoa[0]);
+                            bool person_option = true;
+                            do
+                            {
+                                string option;
+                                Console.WriteLine("Deseja escolher uma pessoa diferente:\n[1] - Sim\n[2] - Não");
+                                option = Console.ReadLine();
+                                switch (option)
+                                {
+                                    case "1":
+                                        bool invalido;
+                                        Pessoa auxPessoa;
+                                        string diffPerson;
+                                        do
+                                        {
+                                            Console.WriteLine("Qual o nome de quem receberá a tarefa: ");
+                                            diffPerson = Console.ReadLine();
+                                            invalido = String.IsNullOrEmpty(diffPerson);
+                                            if (invalido)
+                                            {
+                                                Console.WriteLine("Nome inválido");
+                                            }
+                                        } while (invalido);
+                                        auxPessoa = (ProcurarPessoa(listaPessoa, diffPerson));
+                                        if(auxPessoa == null)
+                                        {
+                                            Console.WriteLine("Pessoa inválida");
+                                            person_option = true;
+                                        }
+                                        else
+                                        {
+                                            tarefa.SetPessoa(auxPessoa);
+                                            person_option = false;
+                                        }
+                                        break;
+                                    case "2":
+                                        person_option = false;
+                                        tarefa.SetPessoa(listaPessoa[0]);
+                                        break;
+                                    default:
+                                        Console.WriteLine("Valor inválido");
+                                        break;
+                                }
+                            } while (person_option);
                             listaTarefas.Add(tarefa);
-                            UpdateFile("ToDoTasks.txt", listaTarefas);
+                            UpdateFileTasks("ArquivoTarefas.txt", listaTarefas);
                         }
                         else
                         {
@@ -209,7 +282,7 @@ internal class Program
                 case "7":
                     while ((tarefa = ProcurarTarefa(listaTarefas)) == null) { }
                     tarefa.SetStatus();
-                    UpdateFile("ToDoTasks.txt", listaTarefas);
+                    UpdateFileTasks("ArquivoTarefas.txt", listaTarefas);
                 break;
 
                 case "8":
@@ -224,12 +297,16 @@ internal class Program
                     ListarTarefas(listaTarefas);
                 break;
 
+                case "11":
+                    break;
+
                 default:
                     Console.WriteLine("Opção inválida !");
                 break;
             }
 
             Console.WriteLine();
+            UpdateFileListPerson("ArquivoPessoa.txt", listaPessoa);
 
         }
 
@@ -273,11 +350,11 @@ internal class Program
         Console.WriteLine("OPERAÇÕES SOBREA TAREFA: ");
         Console.WriteLine("1 - CRIAR TAREFA");
         Console.WriteLine("2 - ALTERAR DESCRIÇÃO");
-        Console.WriteLine("3 - CATEGORIA");
-        Console.WriteLine("4 - PESSOA");
-        Console.WriteLine("5 - DATA DE CRIAÇÃO");
-        Console.WriteLine("6 - DATA DE VENCIMENTO");
-        Console.WriteLine("7 - MUDAR STATUS");
+        Console.WriteLine("3 - MENU CATEGORIA");
+        Console.WriteLine("4 - MENU PESSOA");
+        Console.WriteLine("5 - VISUALIZAR DATA DE CRIAÇÃO DA TAREFA");
+        Console.WriteLine("6 - VIZUALIZAR DATA DE VENCIMENTO DA TAREFA");
+        Console.WriteLine("7 - MUDAR STATUS  DA TAREFA");
         Console.WriteLine("8 - LISTAR PESSOAS");
         Console.WriteLine("9 - LISTAR CATEGORIAS");
         Console.WriteLine("10 - LISTAS TAREFAS");
@@ -366,12 +443,14 @@ internal class Program
         }
     }
 
-    private static void UpdateFile(string file, List<ToDo> list)
+    private static void UpdateFileTasks(string file, List<ToDo> list)
     {
+        List<ToDo> temp = new();
         try
         {
+            temp = ReadFileListToDo(file);
             StreamWriter sw = new(file);
-            foreach (var item in list)
+            foreach (var item in temp)
             {
                 sw.WriteLine(item.ToFile());
             }
@@ -461,5 +540,56 @@ internal class Program
 
         return retorno;
     }
-    
+
+    private static List<Pessoa>ReadFileListPerson(string file)
+    {
+        List<Pessoa> listPerson = new();
+        string item = "";
+
+        Pessoa pessoa;
+        string nome_proprietario_tarefa;
+        string id_proprietario_tarefa;
+        try
+        {
+            StreamReader sr = new StreamReader(file);
+            while (!sr.EndOfStream)
+            {
+                item = sr.ReadLine();
+                string[] linha = item.Split(";");
+
+                id_proprietario_tarefa = linha[0];
+                nome_proprietario_tarefa = linha[1];
+                pessoa = new(id_proprietario_tarefa, nome_proprietario_tarefa);
+
+                listPerson.Add(pessoa);
+                sr.Close();
+
+            }
+
+        }
+        catch (Exception n)
+        {
+
+        }
+
+        return listPerson;
+    }
+
+    private static List<Pessoa> UpdateFileListPerson(string file, List<Pessoa> list)
+    {
+        try
+        {
+            StreamWriter sw = new(file);
+            foreach (var item in list)
+            {
+                sw.WriteLine(item.PersonToFile());
+            }
+            sw.Close();
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+        return list;
+    }
 }
