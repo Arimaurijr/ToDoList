@@ -71,6 +71,7 @@ internal class Program
         ToDo tarefa = null;
         string? descricao = null;
         bool flag;
+        bool quebraLaco;
 
         while(opcao != "9")
         {
@@ -170,8 +171,21 @@ internal class Program
                     flag = false;
                     tarefa = null;
 
-                    while ((tarefa = ProcurarTarefa(listaTarefas)) == null) { }
+                    quebraLaco = true;
+                    int contadorQuebrarAlteracao = 0;
+                    while ((tarefa = ProcurarTarefa(listaTarefas)) == null && quebraLaco)
+                    {
+                        if (contadorQuebrarAlteracao > 0)
+                        {
+                            Console.WriteLine($"Digite um ID válido.\n Em {5 - contadorQuebrarAlteracao} tentativas retornará ao menu");
+                        }
+                        contadorQuebrarAlteracao++;
+                        if (contadorQuebrarAlteracao == 5)
+                            quebraLaco = false;
+                    }
 
+                    if (!(tarefa == null))
+                    {
                     Console.WriteLine("Digite a nova descrição da tarefa: ");
                     descricao = Console.ReadLine();
                     do
@@ -189,8 +203,8 @@ internal class Program
                         }
 
                     }while(flag == false);
-
-                break;
+                    }
+                    break;
 
                 case "3":
 
@@ -271,8 +285,23 @@ internal class Program
 
                             }while(flag == false);
                         }
-                        while ((tarefa = ProcurarTarefa(listaTarefas)) == null) { }
-                        tarefa.SetPessoa(pessoa);
+                        quebraLaco = true;
+                        int contadoruQuebrarTrocarPessoa = 0;
+                        while ((tarefa = ProcurarTarefa(listaTarefas)) == null && quebraLaco)
+                        {
+                            if (contadoruQuebrarTrocarPessoa > 0)
+                            {
+                                Console.WriteLine($"Digite um ID válido.\n Em {5 - contadoruQuebrarTrocarPessoa} tentativas reetornará ao menu");
+                            }
+                            contadoruQuebrarTrocarPessoa++;
+                            if (contadoruQuebrarTrocarPessoa == 5)
+                                quebraLaco = false;
+                        }
+
+                        if (!(tarefa == null))
+                        {
+                            tarefa.SetPessoa(pessoa);
+                        }
                     }
                 break;
 
@@ -434,7 +463,6 @@ internal class Program
             foreach(ToDo item_tarefa in listasTarefas)
             {
                 Console.WriteLine(item_tarefa.ToString());
-                Console.WriteLine(listasTarefas.Count);
                 Console.WriteLine();
             }
         }
