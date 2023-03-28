@@ -117,7 +117,7 @@ namespace ToDoList
         {
             this._proprietario = pessoa;
         }
-
+        
         public override string ToString()
         {
             return "ID: " + GetID() + "\n" +
@@ -126,7 +126,7 @@ namespace ToDoList
                    "Pessoa: " + GetPessoa() + "\n" +
                    "Data criação: " + GetData_criacao() + "\n" +
                    "Data de vencimento: " + GetData_vencimento() + "\n" +
-                   "Status: " + GetStatus();
+                   "Status: " + GetStatus()+ "\n";
         }
 
         public string DateTimeToFile(DateTime d)
