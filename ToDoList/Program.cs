@@ -439,6 +439,7 @@ internal class Program
             foreach(ToDo item_tarefa in listasTarefas)
             {
                 Console.WriteLine(item_tarefa.ToString());
+                Console.WriteLine(listasTarefas.Count);
             }
         }
     }
@@ -448,9 +449,14 @@ internal class Program
         List<ToDo> temp = new();
         try
         {
-            temp = ReadFileListToDo(file);
+            //temp = ReadFileListToDo(file);
+            //StreamWriter sw = new(file);
+            //foreach (var item in temp)
+            //{
+            //    sw.WriteLine(item.ToFile());
+            //}
             StreamWriter sw = new(file);
-            foreach (var item in temp)
+            foreach (var item in list)
             {
                 sw.WriteLine(item.ToFile());
             }
@@ -493,8 +499,9 @@ internal class Program
 
         try
         {
+            var verify = "";
             StreamReader sr = new StreamReader(file);
-            while(!sr.EndOfStream)
+            while(verify != null)
             {
                 item = sr.ReadLine();
                 string[] linha = item.Split(";");
@@ -541,7 +548,7 @@ internal class Program
         return retorno;
     }
 
-    private static List<Pessoa>ReadFileListPerson(string file)
+    private static List<Pessoa> ReadFileListPerson(string file)
     {
         List<Pessoa> listPerson = new();
         string item = "";
