@@ -349,18 +349,11 @@ internal class Program
         Console.WriteLine("2 - ALTERAR DESCRIÇÃO");
         Console.WriteLine("3 - MENU CATEGORIA");
         Console.WriteLine("4 - MENU PESSOA");
-        Console.WriteLine("5 - VISUALIZAR DATA DE CRIAÇÃO DA TAREFA");
-        Console.WriteLine("6 - VISUALIZAR DATA DE VENCIMENTO DA TAREFA");
-        Console.WriteLine("7 - MUDAR STATUS DA TAREFA");
-        Console.WriteLine("3 - MENU CATEGORIA");
-        Console.WriteLine("4 - MENU PESSOA");
-        Console.WriteLine("5 - VISUALIZAR DATA DE CRIAÇÃO DA TAREFA");
-        Console.WriteLine("6 - VIZUALIZAR DATA DE VENCIMENTO DA TAREFA");
-        Console.WriteLine("7 - MUDAR STATUS DA TAREFA");
-        Console.WriteLine("8 - LISTAR PESSOAS");
-        Console.WriteLine("9 - LISTAR CATEGORIAS");
-        Console.WriteLine("10 - LISTAR TAREFAS");
-        Console.WriteLine("11 - SAIR");
+        Console.WriteLine("5 - MUDAR STATUS DA TAREFA");
+        Console.WriteLine("6 - LISTAR PESSOAS");
+        Console.WriteLine("7 - LISTAR CATEGORIAS");
+        Console.WriteLine("8 - LISTAR TAREFAS");
+        Console.WriteLine("9 - SAIR");
         opcao = Console.ReadLine();
 
         return opcao;
